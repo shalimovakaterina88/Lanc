@@ -104,6 +104,7 @@ img{display:block; max-width:100%;}
 @media (max-width:560px){
   .site-footer{margin-top:32px;}
   #stores{padding-bottom:16px;}
+  .story-block{padding-bottom:24px;}
 }
 .footer-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:40px;}
 .footer-grid h4{color:var(--white); font-size:13px; letter-spacing:.14em; text-transform:uppercase; margin:0 0 16px;}
