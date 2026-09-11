@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Товар — LANC Jewels</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">LANC<span class="spark">✦</span><small>&nbsp;jewels</small></a>
+    <button class="nav-toggle" id="navToggle" aria-label="Меню"><span></span><span></span><span></span></button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Главная</a></li>
+      <li><a href="catalog.html" class="active">Каталог</a></li>
+      <li><a href="index.html#stores">Магазины</a></li>
+      <li><a href="cooperation.html">Сотрудничество</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section style="padding-top:44px;">
+  <div class="container">
+    <p class="breadcrumb"><a href="index.html">Главная</a> / <a href="catalog.html">Каталог</a> / <span id="crumbTitle"></span></p>
+    <div class="product-detail" id="productRoot"></div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">Вам может понравиться</p>
+      <h2>Другие украшения коллекции</h2>
+    </div>
+    <div class="grid-3" id="relatedGrid"></div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div>
+      <div class="footer-logo">LANC<span class="spark">✦</span></div>
+      <p>Украшения из серебра 925 собственного производства. Родиевое и платиновое покрытие, фианиты, ручная сборка.</p>
+    </div>
+    <div>
+      <h4>Навигация</h4>
+      <ul>
+        <li><a href="catalog.html">Каталог</a></li>
+        <li><a href="index.html#stores">Магазины</a></li>
+        <li><a href="cooperation.html">Сотрудничество</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Магазины на маркетплейсах</h4>
+      <ul>
+        <li><a href="https://ozon.ru/s/lanc" target="_blank" rel="noopener">OZON — ozon.ru/s/lanc</a></li>
+        <li><a href="https://www.wildberries.ru/seller/117154" target="_blank" rel="noopener">Wildberries — магазин LANC</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <span>© LANC Jewels — украшения из серебра 925</span>
+    <span>Серебро 925 · Родий · Платина</span>
+  </div>
+</footer>
+
+<script src="js/products.js"></script>
+<script>
+  const params = new URLSearchParams(location.search);
+  const id = params.get('id');
+  const product = getProductById(id) || PRODUCTS[0];
+  let current = 0;
+
+  document.title = product.title + ' — LANC Jewels';
+  document.getElementById('pageTitle').textContent = product.title + ' — LANC Jewels';
+  document.getElementById('crumbTitle').textContent = product.title;
+
+  const imgs = Array.from({length: product.images}, (_,i) => productImagePath(product.id, i+1));
+
+  const root = document.getElementById('productRoot');
+  root.innerHTML = `
+    <div>
+      <div class="gallery-main" id="galleryMain">
+        ${imgs.map((src,i)=>`<img src="${src}" class="${i===0?'active':''}" data-i="${i}" alt="${product.title}">`).join('')}
+        <div class="gallery-arrow prev" id="prevBtn">&#10094;</div>
+        <div class="gallery-arrow next" id="nextBtn">&#10095;</div>
+        <div class="gallery-count" id="galleryCount">1 / ${imgs.length}</div>
+      </div>
+      <div class="thumbs" id="thumbs">
+        ${imgs.map((src,i)=>`<img src="${src}" data-i="${i}" class="${i===0?'active':''}" alt="ракурс ${i+1}">`).join('')}
+      </div>
+    </div>
+    <div class="product-info">
+      <p class="eyebrow">${CATEGORY_LABELS[product.category]}</p>
+      <h1>${product.title}</h1>
+      <p class="sub">${product.subtitle}</p>
+      <div class="price">${product.price.toLocaleString('ru-RU')} ₽</div>
+      <p class="desc">${product.description}</p>
+      <ul class="spec-list">${product.material.map(m=>`<li>${m}</li>`).join('')}</ul>
+      <div class="product-actions">
+        <a href="${product.ozonUrl}" target="_blank" rel="noopener" class="btn btn-gold">Купить на OZON</a>
+        <a href="${product.wbUrl}" target="_blank" rel="noopener" class="btn btn-wb">Купить на Wildberries</a>
+      </div>
+      <div class="product-actions">
+        <a href="catalog.html" class="btn btn-outline">Назад в каталог</a>
+      </div>
+      <p class="note-line">Артикул OZON: ${product.id} · Фотографии — с карточки товара официального магазина LANC на OZON.</p>
+    </div>
+  `;
+
+  const mainImgs = root.querySelectorAll('.gallery-main img');
+  const thumbImgs = root.querySelectorAll('.thumbs img');
+  const countEl = document.getElementById('galleryCount');
+
+  function show(i){
+    current = (i + imgs.length) % imgs.length;
+    mainImgs.forEach(im => im.classList.toggle('active', +im.dataset.i === current));
+    thumbImgs.forEach(im => im.classList.toggle('active', +im.dataset.i === current));
+    countEl.textContent = `${current+1} / ${imgs.length}`;
+  }
+  document.getElementById('prevBtn').addEventListener('click', ()=>show(current-1));
+  document.getElementById('nextBtn').addEventListener('click', ()=>show(current+1));
+  thumbImgs.forEach(t => t.addEventListener('click', ()=>show(+t.dataset.i)));
+
+  // basic swipe support
+  let touchX = null;
+  const gm = document.getElementById('galleryMain');
+  gm.addEventListener('touchstart', e => touchX = e.touches[0].clientX);
+  gm.addEventListener('touchend', e => {
+    if(touchX===null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if(Math.abs(dx) > 40) show(current + (dx < 0 ? 1 : -1));
+    touchX = null;
+  });
+
+  // related products
+  const related = PRODUCTS.filter(p => p.id !== product.id).slice(0,3);
+  document.getElementById('relatedGrid').innerHTML = related.map(p => productCardHTML(p)).join('');
+</script>
+<script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Каталог — LANC Jewels</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">LANC<span class="spark">✦</span><small>&nbsp;jewels</small></a>
+    <button class="nav-toggle" id="navToggle" aria-label="Меню"><span></span><span></span><span></span></button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Главная</a></li>
+      <li><a href="catalog.html" class="active">Каталог</a></li>
+      <li><a href="index.html#stores">Магазины</a></li>
+      <li><a href="cooperation.html">Сотрудничество</a></li>
+    </ul>
+  </nav>
+</header>
+
+<div class="page-hero" style="background-image:url('images/brand/lifestyle-group.png');">
+  <div class="page-hero-inner">
+    <p class="eyebrow">Каталог</p>
+    <h1>Все украшения LANC Jewels</h1>
+    <p>Серебро 925, родиевое покрытие, фианиты.</p>
+  </div>
+</div>
+
+<section>
+  <div class="container">
+    <div class="catalog-toolbar" id="catalogFilters"></div>
+    <div class="grid-3" id="catalogGrid"></div>
+  </div>
+</section>
+
+<section style="padding-top:0;">
+  <div class="cta-band">
+    <p class="eyebrow" style="color:var(--gold-300);">Хотите вживую?</p>
+    <h2>Примерьте украшения в наших магазинах</h2>
+    <p>Фирменные корнеры LANC Jewels в торговых центрах — с полной витриной ассортимента.</p>
+    <a href="index.html#stores" class="btn btn-gold">Наши магазины</a>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div>
+      <div class="footer-logo">LANC<span class="spark">✦</span></div>
+      <p>Украшения из серебра 925 собственного производства. Родиевое и платиновое покрытие, фианиты, ручная сборка.</p>
+    </div>
+    <div>
+      <h4>Навигация</h4>
+      <ul>
+        <li><a href="catalog.html">Каталог</a></li>
+        <li><a href="index.html#stores">Магазины</a></li>
+        <li><a href="cooperation.html">Сотрудничество</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Магазины на маркетплейсах</h4>
+      <ul>
+        <li><a href="https://ozon.ru/s/lanc" target="_blank" rel="noopener">OZON — ozon.ru/s/lanc</a></li>
+        <li><a href="https://www.wildberries.ru/seller/117154" target="_blank" rel="noopener">Wildberries — магазин LANC</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <span>© LANC Jewels — украшения из серебра 925</span>
+    <span>Серебро 925 · Родий · Платина</span>
+  </div>
+</footer>
+
+<script src="js/products.js"></script>
+<script>
+  const grid = document.getElementById('catalogGrid');
+  const filtersEl = document.getElementById('catalogFilters');
+  const cats = ['all', ...Object.keys(CATEGORY_LABELS)];
+
+  function render(filter){
+    grid.innerHTML = '';
+    const list = filter === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.category === filter);
+    list.forEach(p => { grid.innerHTML += productCardHTML(p); });
+  }
+
+  filtersEl.innerHTML = cats.map(c =>
+    `<button class="filter-btn ${c==='all'?'active':''}" data-cat="${c}">${c==='all'?'Все украшения':CATEGORY_LABELS[c]}</button>`
+  ).join('');
+
+  filtersEl.querySelectorAll('.filter-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      filtersEl.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      render(btn.dataset.cat);
+    });
+  });
+
+  render('all');
+</script>
+<script src="js/main.js"></script>
+</body>
+</html>
